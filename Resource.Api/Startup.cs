@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using Resource.Api.Data;
 
 namespace Resource.Api
 {
@@ -19,8 +21,13 @@ namespace Resource.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
+            var connection = Configuration.GetConnectionString("RadDb");
+
+            services.AddDbContext<PatientDbContext>(options =>
+                options.UseSqlServer(connection));
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
